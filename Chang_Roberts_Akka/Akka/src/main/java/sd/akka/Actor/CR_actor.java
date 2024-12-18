@@ -43,7 +43,10 @@ public class CR_actor extends AbstractActor {
 
 	public void startElection(StartElection msg) {
 		if(!StartedElection && !AllowSend) {
-			System.out.println("Actor id " + id + " : " + IdRetrieve()); 
+			System.out.println(""); 
+			System.out.println("Election is starting !");
+			System.out.println("Actor n° " + getSelf().path().name() + " : " + IdRetrieve()); 
+			System.out.println(""); 
 			PrintRing();
 			nextActor.tell(new ElectionMsg((id)), getSelf()); 
 			StartedElection = true; 
@@ -56,22 +59,21 @@ public class CR_actor extends AbstractActor {
 		if (msg.IDcandidat > id) {
 			nextActor.tell(new ElectionMsg(msg.IDcandidat), getSelf());
 			electionParticipant = true;
-			System.out.println("Actor " + id + " (" + getSelf().path().name() + ")" 
-							   + " received " + msg.IDcandidat
+			System.out.println("Actor n°" + getSelf().path().name() + " (" + id  + ")"
+							   + " Received " + msg.IDcandidat
 							   + " which is higher. He forwards " + msg.IDcandidat);
 		} else if (msg.IDcandidat < id && !electionParticipant) {
 			nextActor.tell(new ElectionMsg(id), getSelf());
 			electionParticipant = true;
-			System.out.println("Actor " + id + " (" + getSelf().path().name() + ")" 
-							   + " received " + msg.IDcandidat
+			System.out.println("Actor n°" + getSelf().path().name() + " (" + id  + ")"
+							   + " Received " + msg.IDcandidat
 							   + " which is lower. He sends his own ID: " + id);
 		} else if (msg.IDcandidat == id) {
 			nextActor.tell(new ElectedMsg(id), getSelf());
 			electionParticipant = true;
-			System.out.println("Actor " + id + " (" + getSelf().path().name() + ")"
-							   + " received " + msg.IDcandidat
-							   + ", which is his own ID. " 
-							   + id + " is elected.");
+			System.out.println("Actor n°" + getSelf().path().name() + " (" + id  + ")"
+							   + " Has received : " + msg.IDcandidat
+							   + ", which is his own ID. " + getSelf().path().name() + " is elected.");
 			AllowSend = false;
 		}
 	}
@@ -82,13 +84,13 @@ public class CR_actor extends AbstractActor {
 	
 		if (msg.IDWinner != id) {
 			nextActor.tell(new ElectedMsg(msg.IDWinner), getSelf());
-			System.out.println("Actor " + id + " (" + getSelf().path().name() + ")"
-							   + " received the elected message for actor " 
+			System.out.println("Actor n°" + getSelf().path().name() + " (" + id  + ")"
+							   + " Has received the elected message for actor " 
 							   + msg.IDWinner + " and forwards it.");
 			getContext().stop(getSelf());
 		} else {
-			System.out.println("Actor " + id + " (" + getSelf().path().name() + ")" 
-							   + " is elected. Therefore, elections are over.");
+			System.out.println("Actor n°" + getSelf().path().name() + " (" + msg.IDWinner + ")"
+							   + ", is elected. Therefore, elections are over.");
 			getContext().stop(getSelf());
 		}
 	}
@@ -105,7 +107,7 @@ public class CR_actor extends AbstractActor {
 	}
 
 	private void PrintRing() {
-		System.out.println(getSelf().path().name() + " : " + id + ", has as neighbor " 
+		System.out.println("Actor n°" + getSelf().path().name() + " (" + id  + "), has as neighbor " 
 							+ (nextActor != null ? nextActor.path().name() : " no process. ")); 
 	}
 
